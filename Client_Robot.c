@@ -23,6 +23,25 @@
    char* path;
  
  }socket_data;
+ 
+ /*Initialize socket_data struct function*/
+ 
+ void initializeSocketData(socket_data* s, const char* path, int sock){
+   
+   s->path =(char*)malloc(strlen(path)+1);
+   strcpy(s->path, path);
+   
+   s->sock = sock;
+ 
+ }
+ 
+ /*deallocate socket_data struct function*/
+ 
+ void deallocateSocketData(socket_data* s){
+ 
+   free(s->path);
+ 
+ }
 
  /*Write function*/
  void* clientWrite(void* socket_info){
@@ -112,8 +131,7 @@
      	printf("Please enter the program file path:");
 	scanf("%s",path);
 	
-	s.sock = sock;
-	s.path = path;
+	initializeSocketData(&s,path,sock); // assign the data of socket programming
 	
 	pthread_t t_write;
      	pthread_t t_read;
@@ -122,6 +140,8 @@
 	pthread_create(&t_read,NULL,clientRead,(void*)&s);
 	pthread_join(t_write,NULL);  
 	pthread_join(t_read,NULL);  
+	deallocateSocketData(&s);
+	
 	//close the socket
 	close(sock);
 	
